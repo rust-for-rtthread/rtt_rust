@@ -42,6 +42,7 @@ TARGET_ARCH = {
     "cortex-m3": "thumbv7em-none-eabihf",
     "cortex-m4": "thumbv7em-none-eabihf",
     "cortex-m7": "thumbv7em-none-eabihf",
+    "cortex-a": "armv7a-none-eabi",
 }
 
 DUMMY_FIX = """
@@ -78,6 +79,31 @@ pub extern "C" fn _kill() {}
 #[no_mangle]
 pub extern "C" fn _getpid() {}
 """
+
+
+FEATURE_FILE_PATH = ""
+
+
+def ClearFeature(cwd):
+    path = os.path.join(cwd, "rtt_rs2")
+    os.system("cd %s; git restore Cargo.toml" % path)
+
+
+def PrepareSetFeature(cur_pkg_dir):
+    global FEATURE_FILE_PATH
+    path = os.path.join(cur_pkg_dir, "rtt_rs2")
+    FEATURE_FILE_PATH = os.path.join(path, "Cargo.toml")
+    os.system("cd %s; git restore Cargo.toml" % path)
+
+
+def SeleceFeature(feature):
+    if FEATURE_FILE_PATH == "":
+        print("Rust build: Please call PrepareSetFeature first")
+        return
+    meta = toml.load(FEATURE_FILE_PATH)
+    meta["features"]["default"] += [feature]
+    with open(FEATURE_FILE_PATH, "w") as file:
+        toml.dump(meta, file)
 
 
 def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
@@ -185,6 +211,7 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
         all_rust_flag += " " + i
     for i in CARGO_CMD:
         all_cargo_cmd += " " + CARGO_CMD[i]
+
     build_path = os.path.join(cur_pkg_dir, "rust_dummy")
     cmd = 'cd %s; RTT_PATH=%s RUSTFLAGS="%s" %s' % (
         build_path,
