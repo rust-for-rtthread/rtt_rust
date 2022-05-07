@@ -16,6 +16,7 @@ else:
   if PrebuildRust(cwd, rtconfig.CPU, Rtt_Root, Rtt_Root+"/../applications/"):
     LINKFLAGS = " -L%s" % (cwd + "/rust_out/")
     LINKFLAGS += " -Wl,--whole-archive -lrust -Wl,--no-whole-archive"
+    LINKFLAGS += " -Wl,--allow-multiple-definition"
 
   group = DefineGroup('rust', src, depend=[], LINKFLAGS=LINKFLAGS)
 
