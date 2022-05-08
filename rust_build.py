@@ -8,14 +8,23 @@ TEMPLATE = {
     "dependencies": {},
 }
 
-RUSTC_FLAG = [
-    "-C opt-level=z",
+RUSTC_FLAG = {
+    "f1": "-C opt-level=z",
     # "-C panic=abort",
-    "-C relocation-model=static"
+    "f2": "-C relocation-model=static",
     # "-C lto",
     # "-C codegen-units=1",
     # "-C debuginfo=2",
-]
+    # for main path
+    "remap_main": " --remap-path-prefix=%s=",
+    # for apps
+    "remap_apps": " --remap-path-prefix=%s=apps",
+    # for core
+    "remap_core": " --remap-path-prefix=%s=core",
+    # for alloc
+    "remap_alloc": " --remap-path-prefix=%s=alloc",
+}
+
 
 CARGO_CMD = {
     "f1": "cargo rustc",
@@ -25,15 +34,8 @@ CARGO_CMD = {
     "f4": "--release",
     "out-path": "--target-dir=%s",
     "f5": "--",
-    # for main path
-    "remap_main": "--remap-path-prefix=%s=",
-    # for apps
-    "remap_apps": "--remap-path-prefix=%s=apps",
-    # for core
-    "remap_core": "--remap-path-prefix=%s=core",
-    # for alloc
-    "remap_alloc": "--remap-path-prefix=%s=alloc",
 }
+
 
 RUSTC_CORE_PATH = "lib/rustlib/src/rust/library/core"
 RUSTC_ALLOC_PATH = "lib/rustlib/src/rust/library/alloc"
@@ -188,14 +190,14 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
     if not check:
         return False
 
-    CARGO_CMD["remap_core"] = CARGO_CMD["remap_core"] % os.path.join(
+    RUSTC_FLAG["remap_core"] = RUSTC_FLAG["remap_core"] % os.path.join(
         rustc_path, RUSTC_CORE_PATH
     )
-    CARGO_CMD["remap_alloc"] = CARGO_CMD["remap_alloc"] % os.path.join(
+    RUSTC_FLAG["remap_alloc"] = RUSTC_FLAG["remap_alloc"] % os.path.join(
         rustc_path, RUSTC_ALLOC_PATH
     )
-    CARGO_CMD["remap_apps"] = CARGO_CMD["remap_apps"] % app_dir
-    CARGO_CMD["remap_main"] = CARGO_CMD["remap_main"] % cur_pkg_dir
+    RUSTC_FLAG["remap_apps"] = RUSTC_FLAG["remap_apps"] % os.path.abspath(app_dir)
+    RUSTC_FLAG["remap_main"] = RUSTC_FLAG["remap_main"] % os.path.abspath(cur_pkg_dir)
     CARGO_CMD["out-path"] = CARGO_CMD["out-path"] % os.path.join(
         cur_pkg_dir, "rust_out"
     )
@@ -208,7 +210,7 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
     all_cargo_cmd = ""
 
     for i in RUSTC_FLAG:
-        all_rust_flag += " " + i
+        all_rust_flag += " " + RUSTC_FLAG[i]
     for i in CARGO_CMD:
         all_cargo_cmd += " " + CARGO_CMD[i]
 
@@ -220,6 +222,7 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
         all_rust_flag,
         all_cargo_cmd,
     )
+    print(cmd)
     if os.system(cmd) != 0:
         print("Prebuild RUST failed.")
         return False
