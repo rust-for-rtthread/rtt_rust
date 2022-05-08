@@ -21,11 +21,16 @@ else:
   if GetDepend("RT_USING_SMP"):
     SeleceFeature("smp")
 
-  if PrebuildRust(cwd, rtconfig.CPU, Rtt_Root, Rtt_Root+"/../applications/"):
+  ret = PrebuildRust(cwd, rtconfig.CPU, Rtt_Root, Rtt_Root+"/../applications/")
+  if ret == "OK":
     LINKFLAGS = " -L%s" % (cwd + "/rust_out/")
     LINKFLAGS += " -Wl,--whole-archive -lrust -Wl,--no-whole-archive"
     LINKFLAGS += " -Wl,--allow-multiple-definition"
-
+  elif ret == "PASS":
+    pass
+  elif ret == "ERR":
+    raise Exception("RUST BUILD FATAL ERROR!!!")
+    
   group = DefineGroup('rust', src, depend=[], LINKFLAGS=LINKFLAGS)
 
 Return('group')

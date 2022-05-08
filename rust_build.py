@@ -120,13 +120,13 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
             rust_app_proj.append(os.path.join(app_dir, apps))
 
     if len(rust_app_proj) == 0:
-        return False
+        return "PASS"
 
     try:
         arch = TARGET_ARCH[arch]
     except:
         print("Rust build: Not support this ARCH %s" % arch)
-        return False
+        return "ERR"
 
     try:
         # fetch cargo package name
@@ -134,14 +134,17 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
             meta = toml.load(os.path.join(proj, "Cargo.toml"))
             rust_app_proj_name.append(meta["package"]["name"])
     except:
-        print("Rust build: Error cargo directory")
-        return False
+        print("Rust build: Error cargo pkg %s" % rust_app_proj)
+        print("Rust build: Toml load file error!")
+        print("Rust build: Some error in file Cargo.toml!")
+        return "ERR"
 
     # create statliclib rust-dummy
     if not os.path.exists(os.path.join(cur_pkg_dir, "rust_dummy", "Cargo.toml")):
         if 0 != os.system("cd %s; cargo new --lib rust_dummy" % cur_pkg_dir):
             print("Rust build: Create dummy project failed")
-            return False
+            print("Rust build: Run cmd 'cargo new --lib rust_dummy' failed")
+            return "ERR"
 
     # add depend: apps rtt_rt2
     for (name, path) in zip(rust_app_proj_name, rust_app_proj):
@@ -169,7 +172,10 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
             toml.dump(TEMPLATE, ftoml)
     except:
         print("Rust build: Generate dummy file failed")
-        return False
+        print(
+            "Rust build: Write 'rust_dummy/Cargo.toml' or 'rust_dummy/src/lib.rs' failed!"
+        )
+        return "ERR"
 
     print("Rust build: Success import apps.")
 
@@ -179,7 +185,8 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
         rustc_path = str(rustc_path[0:-1], "UTF-8")
     except:
         print("Rust build: rust toolchains error")
-        return False
+        print("Rust build: run cmd 'rustc --print sysroot' failed!")
+        return "ERR"
 
     check = False
     try:
@@ -188,7 +195,8 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
     except:
         pass
     if not check:
-        return False
+        print("Rust build: cmd 'rustc --print sysroot' output error path!")
+        return "ERR"
 
     RUSTC_FLAG["remap_core"] = RUSTC_FLAG["remap_core"] % os.path.join(
         rustc_path, RUSTC_CORE_PATH
@@ -224,8 +232,9 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
     )
     print(cmd)
     if os.system(cmd) != 0:
-        print("Prebuild RUST failed.")
-        return False
+        print("Rust build: Prebuild RUST failed.")
+        print("Rust build: run build command failed.")
+        return "ERR"
     if (
         os.system(
             "cp %s %s"
@@ -236,7 +245,7 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
         )
         != 0
     ):
-        print("Prebuild RUST failed.")
-        return False
+        print("Rust build: Copy librust.a failed.")
+        return "ERR"
 
-    return True
+    return "OK"
