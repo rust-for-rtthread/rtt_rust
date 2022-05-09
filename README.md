@@ -20,7 +20,42 @@
 
 
 ## 2. 如何使用
-您可以拷贝一份`rtt_rust_example_app`程序到`Applications`目录，接着使用`scons --rust`命令来构建程序。这将生成一个静态库（`librust.a`）在`rtt_rust`目录下。请保证该静态库参与了最终的链接。
+请在`applications`目录下面添加你的程序
+你可以使用如下命令生成：`cargo new --lib xxx`
+然后增加基本的库的依赖如下
+```toml
+# file Cargo.toml
+# 请注意修改版本号
+[dependencies]
+rtt_main = {path = "../../packages/rtt_rust-v1.0.0/rtt_main/"}
+rtt_rs2 = {path = "../../packages/rtt_rust-v1.0.0/rtt_rs2/"}
+```
+然后添加一个最小程序
+```rust
+// file src/lib.rs
+#![no_std]
+
+extern crate alloc;
+
+use alloc::string::String;
+use rtt_main::rtt_main;
+use rtt_rs2::param::Param;
+use rtt_rs2::println;
+
+// appname: 应用的名字，在命令中将被使用
+// run: 是否使用rt-thread操作系统的自动执行功能
+// cmd: 是否添加app到命令行
+// desc: 命令行程序的描述
+// 最简版本：#[rtt_main(appname="demo")]
+//  请自行调用函数 __demo_main_func
+#[rtt_main(appname="demo", run=true, cmd=true, desc="demo app.")]
+fn main(param: Param) {
+    for i in param {
+        println!("{}", String::from_utf8_lossy(&*i))
+    }
+}
+```
+`APPS`作为一个标准的rust库，你可是使用任何支持的IDE来辅助你的开发。但是`rtt_rs2`在`build.rs`里面应用了一个环境变量 `RTT_PATH`,请你正确设置这个变量到你的`scons --dist`之后的主路径（因为这将使用rt-thread中的头文件来进行bindgen）。
 
 ## 3. 联系方式
 * 维护：陈泓霖
