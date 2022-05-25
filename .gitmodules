@@ -1,12 +1,8 @@
 [submodule "rtt_main"]
 	path = rtt_main
-	url = https://gitee.com/vitors/rtt_main.git
-	branch = master
-[submodule "rtt_rust_example_app"]
-	path = rtt_rust_example_app
-	url = https://gitee.com/vitors/rtt_rust_example_app.git
+	url = https://github.com/vito-chl/rtt_main.git
 	branch = master
 [submodule "rtt_rs2"]
 	path = rtt_rs2
-	url = https://gitee.com/vitors/rtt_rs2.git
+	url = https://github.com/vito-chl/rtt_rs2.git
 	branch = dev
