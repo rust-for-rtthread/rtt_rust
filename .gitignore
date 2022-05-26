@@ -2,3 +2,6 @@ rust_dummy/
 rust_out/
 __pycache__
 .DS_Store
+**/target
+**/Cargo.lock
+**/.idea

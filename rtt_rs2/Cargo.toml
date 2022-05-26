@@ -1,0 +1,24 @@
+[package]
+name = "rtt_rs2"
+version = "0.0.1"
+authors = [ "chenhonglinchl <chenhonglinchl@aliyun.com>",]
+edition = "2021"
+description = "rtthread supprot library"
+license = "MIT"
+
+[dependencies]
+bitfield = "0.13.2"
+# atomic-polyfill = "0.1.3"
+cstr_core = { version = "0.2.4", optional = true }
+cty = { version = "0.2.2", optional = true }
+cfg-if = "1.0.0"
+lazy_static = "1.4.0"
+
+[build-dependencies]
+bindgen = "0.53.1"
+
+[features]
+default = ["rtt"]
+rtt = ["lazy_static/spin_no_std", "cstr_core", "cty"]
+smp = []
+host_test = []
