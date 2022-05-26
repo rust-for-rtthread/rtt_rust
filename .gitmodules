@@ -1,8 +1,0 @@
-[submodule "rtt_main"]
-	path = rtt_main
-	url = https://github.com/vito-chl/rtt_main.git
-	branch = master
-[submodule "rtt_rs2"]
-	path = rtt_rs2
-	url = https://github.com/vito-chl/rtt_rs2.git
-	branch = dev
