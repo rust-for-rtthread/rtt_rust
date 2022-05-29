@@ -57,6 +57,16 @@ fn main(param: Param) {
 ```
 `APPS`作为一个标准的rust库，你可是使用任何支持的IDE来辅助你的开发。但是`rtt_rs2`在`build.rs`里面应用了一个环境变量 `RTT_PATH`,请你正确设置这个变量到你的`scons --dist`之后的主路径（因为这将使用rt-thread中的头文件来进行bindgen）。
 
-## 3. 联系方式
+## 3. 支持情况
+
+- [x] APP自启动
+- [x] APP添加到MSH
+- [x] 线程基本操作
+- [x] 系统延时函数
+- [x] 系统信号量
+- [x] 系统互斥量
+- [x] 系统消息队列
+
+## 4. 联系方式
 * 维护：陈泓霖
-* 邮箱：chenhonglin@aliyun.com
+* 邮箱：chenhonglinchl@aliyun.com
