@@ -26,24 +26,24 @@ impl APIRawCDevOflag {
         APIRawCDevOflag(0)
     }
 
-    fn readonly(&mut self) -> &mut Self {
+    pub fn readonly(&mut self) -> &mut Self {
         self.0 &= !(RT_DEVICE_FLAG_RDWR as u16);
         self.0 |= RT_DEVICE_FLAG_RDONLY as u16;
         self
     }
 
-    fn writeonly(&mut self) -> &mut Self {
+    pub fn writeonly(&mut self) -> &mut Self {
         self.0 &= !(RT_DEVICE_FLAG_RDWR as u16);
         self.0 |= RT_DEVICE_FLAG_WRONLY as u16;
         self
     }
 
-    fn readwrite(&mut self) -> &mut Self {
+    pub fn readwrite(&mut self) -> &mut Self {
         self.0 |= RT_DEVICE_FLAG_RDWR as u16;
         self
     }
 
-    fn flag(&mut self, flag: APIConstCDevOflag, set: bool) -> &mut Self {
+    pub fn flag(&mut self, flag: APIConstCDevOflag, set: bool) -> &mut Self {
         if set {
             self.0 |= flag.0;
         } else {
@@ -90,7 +90,7 @@ pub fn cdev_read(handle: APIRawCDevive, pos: isize, buf: &mut [u8]) -> usize {
 }
 
 #[inline]
-pub fn cdev_write(handle: APIRawCDevive, pos: isize, buf: &mut [u8]) -> usize {
+pub fn cdev_write(handle: APIRawCDevive, pos: isize, buf: &[u8]) -> usize {
     unsafe {
         rt_device_write(
             handle,

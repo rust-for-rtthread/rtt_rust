@@ -2,6 +2,7 @@
 use crate::bind::*;
 
 // Error type from rt-thread `c code`
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum RttCResult {
     Ok = RT_EOK as isize,
     Error = -(RT_ERROR as isize),
