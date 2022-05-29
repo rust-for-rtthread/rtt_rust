@@ -1,0 +1,12 @@
+[package]
+name = "rtt-embedded-hal"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+embedded-hal = "=1.0.0-alpha.7"
+nb = "1"
+[dependencies.rtt_rs2]
+path = "../rtt_rs2/"
+features = ["smp"]
