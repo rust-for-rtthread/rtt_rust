@@ -12,12 +12,19 @@ fn main() {
         Err(_) => return,
     };
 
+    let cpu_path = env::var("RTT_LIB_CPU_PATH");
+    let cpu_path = match cpu_path {
+        Ok(x) => x,
+        Err(_) => return,
+    };
+
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .use_core()
         .ctypes_prefix("c_types")
         .clang_arg(format!("-I{}/", rtt_path))
         .clang_arg(format!("-I{}/rt-thread/{}", rtt_path, "include"))
+        .clang_arg(format!("-I{}/rt-thread/{}", rtt_path, cpu_path))
         .clang_arg(format!("-I{}/rt-thread/{}", rtt_path, "components/finsh/"))
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()

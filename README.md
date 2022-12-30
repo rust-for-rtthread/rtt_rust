@@ -17,6 +17,7 @@
 * RT-Thread 3.0+
 * RUST toolchains +nightly
 * rust-src
+- toml (可以使用 pip 安装)
 
 
 ## 2. 如何使用
