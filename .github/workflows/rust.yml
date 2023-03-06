@@ -1,0 +1,39 @@
+name: Check
+on:
+  pull_request_review:
+    types: [submitted]
+    branches: [ "master" ]
+  issue_comment:
+    types: [created]
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  on_approved:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: base
+      run: echo "Running on_approved"
+    
+  on_issue_build:
+    if: ${{ github.event.issue.number }} == 7
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: base
+      run: echo "Running on_issue_build"
+    
+    
+  build:
+    runs-on: ubuntu-latest
+    env: 
+      RTT_PATH: $(pwd)
+      RTT_LIB_CPU_PATH: "libcpu/arm/cortex-a"
+    steps:
+    - name: Build
+      run: |
+        echo "Runing build"
+        git clone --depth=1 https://github.com/RT-Thread/rt-thread.git
+        cargo build -Z build-std=core,alloc,compiler_builtins --target armv7a-none-eabi
+
