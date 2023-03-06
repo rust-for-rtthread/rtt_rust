@@ -15,7 +15,7 @@ cfg-if = "1.0.0"
 lazy_static = "1.4.0"
 
 [build-dependencies]
-bindgen = "0.53.1"
+bindgen = "0.64.0"
 
 [features]
 default = ["rtt"]
