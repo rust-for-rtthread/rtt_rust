@@ -34,8 +34,8 @@ use core::sync::atomic::*;
 
 const RT_WAITING_FOREVER: isize = -1;
 
-unsafe impl<T: Send> Send for Mutex<T> {}
-unsafe impl<T: Send> Sync for Mutex<T> {}
+unsafe impl<T: Send, M: RawMutexOps + Sized> Send for Mutex<T, M> {}
+unsafe impl<T: Send, M: RawMutexOps + Sized> Sync for Mutex<T, M> {}
 
 pub struct Mutex<T: ?Sized, M = SleepMutex>
 where

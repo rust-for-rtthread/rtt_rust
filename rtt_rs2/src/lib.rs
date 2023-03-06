@@ -8,8 +8,6 @@
 #![cfg_attr(not(feature = "host_test"), no_std)]
 #![feature(alloc_error_handler)]
 #![feature(allow_internal_unstable)]
-#![feature(const_fn_fn_ptr_basics)]
-#![feature(const_fn_trait_bound)]
 #![feature(linkage)]
 #![feature(core_intrinsics)]
 #![allow(dead_code)]
