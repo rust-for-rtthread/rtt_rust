@@ -1,0 +1,43 @@
+name: Check
+on:
+  pull_request_review:
+    types: [submitted]
+    branches: [ "master" ]
+  issue_comment:
+    types: [created]
+env:
+  CARGO_TERM_COLOR: always
+  RTT_PATH: "/opt/rtt/"
+  RTT_LIB_CPU_PATH: "libcpu/arm/cortex-a"
+  
+jobs:
+  on_approved:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Build
+      run: |
+        chmod u+x .github/test_qemu-vexpress-a9.sh
+        .github/test_qemu-vexpress-a9.sh
+    - name: Host_test
+      run: |
+        chmod u+x .github/host_test.sh
+        .github/host_test.sh
+
+  on_trigger:
+    if: ${{ github.event.issue.number }} == 7
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: |
+        chmod u+x .github/test_qemu-vexpress-a9.sh
+        .github/test_qemu-vexpress-a9.sh
+    - name: Host_test
+      run: |
+        chmod u+x .github/host_test.sh
+        .github/host_test.sh
+        
