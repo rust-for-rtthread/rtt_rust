@@ -47,6 +47,13 @@ TARGET_ARCH = {
     "cortex-a": "armv7a-none-eabi",
 }
 
+LIB_CPU_PATH = {
+    "cortex-m3": "libcpu/arm/cortex-m3",
+    "cortex-m4": "libcpu/arm/cortex-m4",
+    "cortex-m7": "libcpu/arm/cortex-m7",
+    "cortex-a": "libcpu/arm/cortex-a",
+}
+
 DUMMY_FIX = """
 #[no_mangle]
 pub extern "C" fn _sbrk() {}
@@ -123,6 +130,7 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
         return "PASS"
 
     try:
+        cpu_path = LIB_CPU_PATH[arch]
         arch = TARGET_ARCH[arch]
     except:
         print("Rust build: Not support this ARCH %s" % arch)
@@ -141,8 +149,10 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
 
     # create statliclib rust-dummy
     if not os.path.exists(os.path.join(cur_pkg_dir, "rust_dummy", "Cargo.toml")):
-        if 0 != os.system("cd %s; cargo new --lib rust_dummy" % cur_pkg_dir):
-            print("Rust build: Create dummy project failed")
+        child = subprocess.Popen('cargo new --vcs none --lib rust_dummy', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=cur_pkg_dir)
+        v = child.wait()
+        if v != 0:
+            print("Rust build: Create dummy project failed", child.stderr.read())
             print("Rust build: Run cmd 'cargo new --lib rust_dummy' failed")
             return "ERR"
 
@@ -223,18 +233,21 @@ def PrebuildRust(cur_pkg_dir, arch, rtt_path, app_dir):
         all_cargo_cmd += " " + CARGO_CMD[i]
 
     build_path = os.path.join(cur_pkg_dir, "rust_dummy")
-    cmd = 'cd %s; RTT_PATH=%s RUSTFLAGS="%s" %s' % (
-        build_path,
-        # TODO fix build.rs
-        rtt_path + "/../",
-        all_rust_flag,
-        all_cargo_cmd,
-    )
-    print(cmd)
-    if os.system(cmd) != 0:
-        print("Rust build: Prebuild RUST failed.")
-        print("Rust build: run build command failed.")
+    
+    env = os.environ
+    env['RTT_PATH'] = rtt_path + "/../"
+    env['RUSTFLAGS'] = all_rust_flag
+    env['RTT_LIB_CPU_PATH'] = cpu_path
+
+    print(all_cargo_cmd)
+    child = subprocess.Popen(all_cargo_cmd, shell=True, env=env, cwd=build_path)
+    v = child.wait()
+
+    if v != 0:
+        print("Rust build: Create dummy project failed")
+        print("Rust build: Run cmd 'cargo new --lib rust_dummy' failed")
         return "ERR"
+
     if (
         os.system(
             "cp %s %s"

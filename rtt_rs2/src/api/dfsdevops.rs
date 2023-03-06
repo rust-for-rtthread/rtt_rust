@@ -52,24 +52,8 @@ pub fn dfsdev_write(handle: APIRawDFSDevive, buf: &[u8]) -> usize {
 }
 
 #[inline]
-pub fn dfsdev_poll_in(handle: APIRawDFSDevive) -> RttCResult {
-    let mut pfd = pollfd {
-        fd: handle,
-        events: POLL_IN as _,
-        revents: 0,
-    };
-    let ret = unsafe {
-        poll(&mut pfd as *mut pollfd, 1, -1)
-    };
-    return if ret == 0 {
-        if pfd.revents & (POLL_IN as i16) != 0 {
-            0.into()
-        } else {
-            RttCResult::Error
-        }
-    } else {
-        ret.into()
-    }
+pub fn dfsdev_poll_in(_handle: APIRawDFSDevive) -> RttCResult {
+    unimplemented!()
 }
 
 #[inline]
