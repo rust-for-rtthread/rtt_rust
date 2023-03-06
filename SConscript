@@ -14,6 +14,7 @@ LINKFLAGS = ""
 
 if GetOption('clean'):
   ClearFeature(cwd)
+  # Replace this command for multi-platform
   os.system("cd %s; rm -rf rust_out" % cwd)
   group = DefineGroup('rust', src, depend=[])
 else:  
