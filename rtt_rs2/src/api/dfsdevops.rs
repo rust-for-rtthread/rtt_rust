@@ -52,7 +52,7 @@ pub fn dfsdev_write(handle: APIRawDFSDevive, buf: &[u8]) -> usize {
 }
 
 #[inline]
-pub fn dfsdev_poll_in(handle: APIRawDFSDevive) -> RttCResult {
+pub fn dfsdev_poll_in(_handle: APIRawDFSDevive) -> RttCResult {
     unimplemented!()
 }
 
