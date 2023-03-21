@@ -95,15 +95,15 @@ FEATURE_FILE_PATH = ""
 
 def ClearFeature(cwd):
     path = os.path.join(cwd, "rtt_rs2")
-    os.system("cd %s; git restore Cargo.toml" % path)
-
+    child = subprocess.Popen('git restore Cargo.toml', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=path)
+    child.wait()
 
 def PrepareSetFeature(cur_pkg_dir):
     global FEATURE_FILE_PATH
     path = os.path.join(cur_pkg_dir, "rtt_rs2")
     FEATURE_FILE_PATH = os.path.join(path, "Cargo.toml")
-    os.system("cd %s; git restore Cargo.toml" % path)
-
+    child = subprocess.Popen('git restore Cargo.toml', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=path)
+    child.wait()
 
 def SeleceFeature(feature):
     if FEATURE_FILE_PATH == "":

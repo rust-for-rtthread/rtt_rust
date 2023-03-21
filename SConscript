@@ -14,10 +14,13 @@ LINKFLAGS = ""
 
 if GetOption('clean'):
   ClearFeature(cwd)
-  # Replace this command for multi-platform
-  os.system("cd %s; rm -rf rust_out" % cwd)
+
+  import shutil
+  import os
+  shutil.rmtree(os.path.join(cwd, 'rust_out'))
+
   group = DefineGroup('rust', src, depend=[])
-else:  
+else:
   PrepareSetFeature(cwd)
   if GetDepend("RT_USING_SMP"):
     SeleceFeature("smp")
