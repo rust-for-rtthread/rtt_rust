@@ -25,7 +25,7 @@ else:
   if GetDepend("RT_USING_SMP"):
     SeleceFeature("smp")
 
-  ret = PrebuildRust(cwd, rtconfig.CPU, Rtt_Root, Rtt_Root+"/../applications/")
+  ret = PrebuildRust(cwd, rtconfig.CPU, Rtt_Root, cwd+"/../../applications/")
   if ret == "OK":
     LINKFLAGS = " -L%s" % (cwd + "/rust_out/")
     LINKFLAGS += " -Wl,--whole-archive -lrust -Wl,--no-whole-archive"
